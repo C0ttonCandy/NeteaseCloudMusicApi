@@ -1,0 +1,16 @@
+{
+  "id": "4135295",
+  "name": "1",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "27363951",
+      "name": "spider",
+      "font_class": "spider",
+      "unicode": "eba0",
+      "unicode_decimal": 60320
+    }
+  ]
+}
