@@ -187,6 +187,8 @@
       :show="spiderDialogStart.show"
       :title="spiderDialogStart.title"
       :showCancel="false"
+      :padding="30"
+      :width="450"
       @close="spiderDialogClose"      
     >
       <el-form>
@@ -283,7 +285,130 @@
         </el-form-item>
       </el-form>
     </Dialog>
-    <!--爬取中-->
+    <!--壁纸弹框-->
+    <Dialog 
+      :show= "WallPaperDialog.show"
+      :title= "WallPaperDialog.title"
+      :buttons="WallPaperDialog.buttons"
+      :showCancel="false"
+      :width="600"
+      @close="WallPaperDialog.show=false"
+    >
+      <el-form
+        label-width="100px"
+      >
+        <el-form-item label="壁纸类别">
+          <el-dropdown>
+            <el-button type="primary">
+              请选择爬取的壁纸类别
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu slot="dropdown">
+                <el-row>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='美女'">
+                      美女
+                    </el-dropdown-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='动漫'">
+                      动漫
+                    </el-dropdown-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='风景'">
+                      风景
+                    </el-dropdown-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='动物'">
+                      动物
+                    </el-dropdown-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='建筑'">
+                      建筑
+                    </el-dropdown-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='节日'">
+                      节日
+                    </el-dropdown-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='游戏'">
+                      游戏
+                    </el-dropdown-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='汽车'">
+                      汽车
+                    </el-dropdown-item>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='影视'">
+                      影视
+                    </el-dropdown-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-dropdown-item @click.native="wallPaperRef='花卉'">
+                      花卉
+                    </el-dropdown-item>
+                  </el-col>
+                </el-row>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </el-form-item>
+      </el-form>
+    </Dialog>
+    <!--小说弹框-->
+    <Dialog 
+      :show= "NovalDialog.show"
+      :title= "NovalDialog.title"
+      :buttons="NovalDialog.buttons"
+      :showCancel="false"
+      :width="600"
+      @close="NovalDialog.show=false"
+    >
+      <el-form
+        label-width="100px"
+      >
+        <el-form-item label="小说名称">
+          <el-input
+            size="large"
+            placeholder="请输入要爬取的小说名称"
+            v-model="novelRef"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="起始章节">
+          <el-input
+            size="large"
+            placeholder="请输入小说的起始章节"
+            v-model="novelStartRef"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="结束章节">
+          <el-input
+            size="large"
+            placeholder="请输入小说的结束章节"
+            v-model="novelEndRef"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </Dialog>
+    <!-- 爬取中
     <Dialog 
       :show="loadingDialog.show"
       :title="loadingDialog.title"
@@ -300,7 +425,7 @@
         style="margin-top: 20px"
       >
       </div>
-    </Dialog>
+    </Dialog> -->
     <!--爬取完成-->
     <Dialog
       :show="false"
@@ -359,6 +484,8 @@ const api = {
   createDownloadUrl: "/file/createDownloadUrl",
   download: "/api/file/download",
   getBilibili: "/crawl/getBiliBili",
+  getWallPaper: "/crawl/getWallPaper",
+  getNovel: "/crawl/getNovel",
 };
 
 const fileAccept = computed(() => {
@@ -634,61 +761,52 @@ const NeteaseMusicDialog = (reactive)({
       type:"primary",
       text:"设置完成",
       click: () => {
-        loadingDialog.show=true;
+
       },
     },
   ],
 })
 const BilibiliDialog = (reactive)({
   show: false,
-  title: "爬虫设置",
+  title: "爬取b站视频",
   buttons: [
+    {
+      
+    },
     {
       type:"primary",
       text:"设置完成",
       click: () => {
-        //loadingDialog.show=true;
-        spiderInterface();
+        BilibiliRequest();
+        loadDataList();
       },
     },
   ],
 })
 const WallPaperDialog = (reactive)({
   show: false,
-  title: "爬虫设置",
+  title: "爬取壁纸",
   buttons: [
     {
       type:"primary",
       text:"设置完成",
       click: () => {
-        loadingDialog.show=true;
+        WallPaperRequest();
+        loadDataList();
       },
     },
   ],
 })
 const NovalDialog = (reactive)({
   show: false,
-  title: "爬虫设置",
+  title: "爬取小说",
   buttons: [
     {
       type:"primary",
       text:"设置完成",
       click: () => {
-        loadingDialog.show=true;
-      },
-    },
-  ],
-})
-const loadingDialog = (reactive)({
-  show: false,
-  title: "正在爬取",
-  buttons: [
-    {
-      type: "primary",
-      text: "停止爬取",
-      click: () => {
-        loadingDialog.show=false;
-        NeteaseMusicDialog.show=false;
+        NovelRequest();
+        loadDataList();
       },
     },
   ],
@@ -699,7 +817,6 @@ const spiderDialogClose = () => {
 const spiderDialogStart = (reactive)({
   show:false,
   title:"请选择爬虫类别",
-
 })
 const NeteaseMusicStart = () => {
   spiderDialogStart.show=false;
@@ -717,8 +834,56 @@ const NovalStart = () => {
   spiderDialogStart.show=false;
   NovalDialog.show=true;
 }
+//爬虫前后端交互
 const bilibiliRef = ref('');
-const spiderInterface = async () => {
+const wallPaperRef = ref('');
+const wallPaperNum = ref('');
+const novelRef = ref('');
+const novelStartRef = ref(1);
+const novelEndRef = ref(1);
+const BilibiliRequest = async () => {
+  let params = {
+    BVId: bilibiliRef.value,
+  };
+  let result = await proxy.Request({
+    url: api.getBilibili,
+    showLoading: showLoading,
+    params,
+  });
+  if (!result) {
+    return;
+  }
+}
+const WallPaperRequest = async () => {
+  let params = {
+    type: wallPaperRef.value,
+    pageNum: wallPaperNum.value,
+  };
+  let result = await proxy.Request({
+    url: api.getWallPaper,
+    showLoading: showLoading,
+    params,
+  });
+  if (!result) {
+    return;
+  }
+}
+const NovelRequest = async () => {
+  let params = {
+    novelId: novelRef.value,
+    startPart: novelStartRef.value,
+    finishPart: novelEndRef.value,
+  };
+  let result = await proxy.Request({
+    url: api.getNovel,
+    showLoading: showLoading,
+    params,
+  });
+  if (!result) {
+    return;
+  }
+}
+const SpiderInterface = async () => {
   let params = {
     // pageNo: tableData.value.pageNo,
     // pageSize: tableData.value.pageSize,
