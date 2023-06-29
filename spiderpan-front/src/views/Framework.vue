@@ -283,6 +283,7 @@ const jump = (data) => {
     return;
   }
   router.push(data.path);
+  console.log(data.path);
 };
 
 const setMenu = (menuCode, path) => {

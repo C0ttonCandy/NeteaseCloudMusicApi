@@ -277,7 +277,7 @@
           <el-input
             size="large"
             placeholder="请输入bilibili视频BV号"
-            v-model="input"
+            v-model="bilibiliRef"
           >
           </el-input>
         </el-form-item>
@@ -358,6 +358,7 @@ const api = {
   changeFileFolder: "/file/changeFileFolder",
   createDownloadUrl: "/file/createDownloadUrl",
   download: "/api/file/download",
+  getBilibili: "/crawl/getBiliBili",
 };
 
 const fileAccept = computed(() => {
@@ -421,6 +422,12 @@ const loadDataList = async () => {
   }
   tableData.value = result.data;
   editing.value = false;
+
+  console.log(params.pageNo);
+  console.log(params.pageSize);
+  console.log(fileNameFuzzy.value);
+  console.log(category.value);
+  console.log(params.filePid);
 };
 
 //展示操作按钮
@@ -616,7 +623,6 @@ const moveFolderDone = async (folderId) => {
 };
 
 //爬虫
-const input = ref('');
 const spider = () => {
   spiderDialogStart.show=true;
 }
@@ -641,7 +647,8 @@ const BilibiliDialog = (reactive)({
       type:"primary",
       text:"设置完成",
       click: () => {
-        loadingDialog.show=true;
+        //loadingDialog.show=true;
+        spiderInterface();
       },
     },
   ],
@@ -686,8 +693,6 @@ const loadingDialog = (reactive)({
     },
   ],
 })
-const spiderDialogNeteaseRef = ref(false);
-const spiderDialogOtherRef = ref(false);
 const spiderDialogClose = () => {
   spiderDialogStart.show=false;
 }
@@ -712,7 +717,35 @@ const NovalStart = () => {
   spiderDialogStart.show=false;
   NovalDialog.show=true;
 }
+const bilibiliRef = ref('');
+const spiderInterface = async () => {
+  let params = {
+    // pageNo: tableData.value.pageNo,
+    // pageSize: tableData.value.pageSize,
+    // fileNameFuzzy: fileNameFuzzy.value,
+    // category: category.value,
+    // filePid: currentFolder.value.fileId,
 
+    BVId: bilibiliRef.value,
+
+  };
+  let result = await proxy.Request({
+    url: api.getBilibili,
+    showLoading: showLoading,
+    params,
+  });
+  if (!result) {
+    return;
+  }
+  // tableData.value = result.data;
+  // editing.value = false;
+
+  // console.log(params.pageNo);
+  // console.log(params.pageSize);
+  // console.log(fileNameFuzzy.value);
+  // console.log(category.value);
+  // console.log(params.filePid);
+};
 
 
 
