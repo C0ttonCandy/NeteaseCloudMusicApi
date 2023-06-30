@@ -299,6 +299,12 @@
       >
         <el-form-item label="壁纸类别">
           <el-dropdown>
+            <el-input
+            size="large"
+            placeholder="请输入下载壁纸张数"
+            v-model="wallPaperNum.value"
+          >
+          </el-input>
             <el-button type="primary">
               请选择爬取的壁纸类别
             </el-button>
@@ -367,6 +373,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
+          
         </el-form-item>
       </el-form>
     </Dialog>
@@ -758,6 +765,14 @@ const NeteaseMusicDialog = (reactive)({
   title: "爬虫设置",
   buttons: [
     {
+      type:"info",
+      text:"返回",
+      click: () => {
+        NeteaseMusicDialog.show=false;
+        spiderDialogStart.show=true;
+      },
+    },
+    {
       type:"primary",
       text:"设置完成",
       click: () => {
@@ -771,7 +786,12 @@ const BilibiliDialog = (reactive)({
   title: "爬取b站视频",
   buttons: [
     {
-      
+      type:"info",
+      text:"返回",
+      click: () => {
+        BilibiliDialog.show=false;
+        spiderDialogStart.show=true;
+      },
     },
     {
       type:"primary",
@@ -788,6 +808,14 @@ const WallPaperDialog = (reactive)({
   title: "爬取壁纸",
   buttons: [
     {
+      type:"info",
+      text:"返回",
+      click: () => {
+        WallPaperDialog.show=false;
+        spiderDialogStart.show=true;
+      },
+    },
+    {
       type:"primary",
       text:"设置完成",
       click: () => {
@@ -801,6 +829,14 @@ const NovalDialog = (reactive)({
   show: false,
   title: "爬取小说",
   buttons: [
+    {
+      type:"info",
+      text:"返回",
+      click: () => {
+        NovalDialog.show=false;
+        spiderDialogStart.show=true;
+      },
+    },
     {
       type:"primary",
       text:"设置完成",
@@ -883,34 +919,7 @@ const NovelRequest = async () => {
     return;
   }
 }
-const SpiderInterface = async () => {
-  let params = {
-    // pageNo: tableData.value.pageNo,
-    // pageSize: tableData.value.pageSize,
-    // fileNameFuzzy: fileNameFuzzy.value,
-    // category: category.value,
-    // filePid: currentFolder.value.fileId,
 
-    BVId: bilibiliRef.value,
-
-  };
-  let result = await proxy.Request({
-    url: api.getBilibili,
-    showLoading: showLoading,
-    params,
-  });
-  if (!result) {
-    return;
-  }
-  // tableData.value = result.data;
-  // editing.value = false;
-
-  // console.log(params.pageNo);
-  // console.log(params.pageSize);
-  // console.log(fileNameFuzzy.value);
-  // console.log(category.value);
-  // console.log(params.filePid);
-};
 
 
 
