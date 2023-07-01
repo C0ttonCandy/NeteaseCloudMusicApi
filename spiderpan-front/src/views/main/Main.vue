@@ -276,6 +276,7 @@
           <el-input
             size="large"
             placeholder="请输入网易云音乐id号"
+            v-model="neteaseMusicIdRef"
           >
           </el-input>
         </el-form-item>
@@ -286,6 +287,7 @@
           <el-input
             size="large"
             placeholder="请输入网易云音乐关键词"
+            v-model="neteaseMusicIdRef"
           >
           </el-input>
         </el-form-item>
@@ -296,6 +298,7 @@
           <el-input
             size="large"
             placeholder="请输入网易云音乐分享链接"
+            v-model="neteaseMusicIdRef"
           >
           </el-input>
         </el-form-item>
@@ -305,6 +308,7 @@
           <el-input
             size="large"
             placeholder="请输入爬取类型(如歌曲、歌单等)"
+            v-model="neteaseMusicTypeRef"
           >
           </el-input>
         </el-form-item>
@@ -314,6 +318,7 @@
           <el-input
             size="large"
             placeholder="请输入起始位置(搜索歌曲或用户可不填)"
+            v-model="neteaseMusicOffsetRef"
           >
           </el-input>
         </el-form-item>
@@ -323,6 +328,7 @@
           <el-input
             size="large"
             placeholder="请输入爬取长度(搜索歌曲或用户可不填)"
+            v-model="neteaseMusicLimitRef"
           >
           </el-input>
         </el-form-item>
@@ -938,6 +944,12 @@ const NeteaseMusicStart = () => {
 const NeteaseMusicWorkStart = () => {
   NeteaseMusicDialog.show=false;
   NeteaseMusicWorkDialog.show=true;
+  if(option==0)
+    _url=api.getNeteaseMusicById;
+  else if(option==1)
+    _url=api.getNeteaseMusicBySearch;
+  else
+    _url=api.getNeteaseMusicByShare;
 }
 const BilibiliStart = () => {
   spiderDialogStart.show=false;
@@ -957,6 +969,7 @@ const neteaseMusicTypeRef = ref('');
 const neteaseMusicLimitRef = ref(0);
 const neteaseMusicOffsetRef = ref(0);
 const option = ref(0);
+const _url = ref('');
 const bilibiliRef = ref('');
 const wallPaperRef = ref('');
 const wallPaperNum = ref(1);
@@ -971,7 +984,7 @@ const NeteaseMusicRequest = async () => {
     offset: neteaseMusicOffsetRef.value,
   };
   let result = await proxy.Request({
-    url: api.getNeteaseMusicById,
+    url: _url,
     showLoading: showLoading,
     params,
   });
