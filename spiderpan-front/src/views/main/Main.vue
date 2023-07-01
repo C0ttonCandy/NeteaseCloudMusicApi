@@ -227,39 +227,104 @@
       :width="600"
       @close="NeteaseMusicDialog.show=false"
     >
+      <el-form>
+        <el-form-item>
+          <el-button 
+            type="primary"
+            @click="NeteaseMusicWorkStart"
+            @mouseover.native="option=0"
+          >
+            通过网页id获取对应内容(歌手、歌曲、用户、歌单)
+          </el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button 
+            type="warning"
+            @click="NeteaseMusicWorkStart"
+            @mouseover.native="option=1"
+          >
+            搜索关键字以获取(歌手、歌曲、歌单)
+          </el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button 
+            type="success"
+            @click="NeteaseMusicWorkStart"
+            @mouseover.native="option=2"
+          >
+            通过分享链接获取(歌曲、歌单)
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </Dialog>
+    <!--网易云三个功能弹框-->
+    <Dialog
+      :show="NeteaseMusicWorkDialog.show"
+      :title="NeteaseMusicWorkDialog.title"
+      :buttons="NeteaseMusicWorkDialog.buttons"
+      :showCancel="false"
+      @close="NeteaseMusicWorkDialog.show=false"
+    >
       <el-form
         label-width="100px"
         @submit.prevent
       >
-        <el-form-item label="BV号">
+        <el-form-item
+          label="id号"
+          v-if="option==0"
+        >
           <el-input
             size="large"
-            placeholder="请输入bilibili视频BV号"
+            placeholder="请输入网易云音乐id号"
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="网易云音乐">
+        <el-form-item
+          label="关键词"
+          v-if="option==1"
+        >
           <el-input
             size="large"
-            placeholder="请输入音乐下载数"
+            placeholder="请输入网易云音乐关键词"
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="下载壁纸">
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              下拉以选择壁纸类型
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>美女</el-dropdown-item>
-                <el-dropdown-item>动漫</el-dropdown-item>
-                <el-dropdown-item>风景</el-dropdown-item>
-                <el-dropdown-item>动物</el-dropdown-item>
-                <el-dropdown-item>建筑</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+        <el-form-item
+          label="分享链接"
+          v-if="option==2"
+        >
+          <el-input
+            size="large"
+            placeholder="请输入网易云音乐分享链接"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="爬取类型"
+        >
+          <el-input
+            size="large"
+            placeholder="请输入爬取类型(如歌曲、歌单等)"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="起始位置"
+        >
+          <el-input
+            size="large"
+            placeholder="请输入起始位置(搜索歌曲或用户可不填)"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="爬取长度"
+        >
+          <el-input
+            size="large"
+            placeholder="请输入爬取长度(搜索歌曲或用户可不填)"
+          >
+          </el-input>
         </el-form-item>
       </el-form>
     </Dialog>
@@ -460,7 +525,7 @@
 <script setup>
 import CategoryInfo from "@/js/CategoryInfo.js";
 import FileShare from "./ShareFile.vue";
-import { ref, reactive, getCurrentInstance, nextTick, computed } from "vue";
+import { ref, reactive, getCurrentInstance, nextTick, computed, normalizeClass } from "vue";
 import { useRouter, useRoute } from "vue-router";
 const { proxy } = getCurrentInstance();
 const router = useRouter();
@@ -493,6 +558,9 @@ const api = {
   getBilibili: "/crawl/getBiliBili",
   getWallPaper: "/crawl/getWallPaper",
   getNovel: "/crawl/getNovel",
+  getNeteaseMusicById: "/crawl/cloudMusic/byId",
+  getNeteaseMusicBySearch: "/crawl/cloudMusic/bySearch",
+  getNeteaseMusicByShare: "/crawl/cloudMusic/byShare",
 };
 
 const fileAccept = computed(() => {
@@ -556,12 +624,6 @@ const loadDataList = async () => {
   }
   tableData.value = result.data;
   editing.value = false;
-
-  console.log(params.pageNo);
-  console.log(params.pageSize);
-  console.log(fileNameFuzzy.value);
-  console.log(category.value);
-  console.log(params.filePid);
 };
 
 //展示操作按钮
@@ -772,11 +834,26 @@ const NeteaseMusicDialog = (reactive)({
         spiderDialogStart.show=true;
       },
     },
+  ],
+})
+const NeteaseMusicWorkDialog = (reactive)({
+  show: false,
+  title: "设置搜索内容",
+  buttons: [
+    {
+      type:"info",
+      text:"返回",
+      click: () => {
+        NeteaseMusicWorkDialog.show=false;
+        NeteaseMusicDialog.show=true;
+      },
+    },
     {
       type:"primary",
       text:"设置完成",
       click: () => {
-
+        NeteaseMusicRequest();
+        loadDataList();
       },
     },
   ],
@@ -858,6 +935,10 @@ const NeteaseMusicStart = () => {
   spiderDialogStart.show=false;
   NeteaseMusicDialog.show=true;
 }
+const NeteaseMusicWorkStart = () => {
+  NeteaseMusicDialog.show=false;
+  NeteaseMusicWorkDialog.show=true;
+}
 const BilibiliStart = () => {
   spiderDialogStart.show=false;
   BilibiliDialog.show=true;
@@ -871,12 +952,33 @@ const NovalStart = () => {
   NovalDialog.show=true;
 }
 //爬虫前后端交互
+const neteaseMusicIdRef = ref('');
+const neteaseMusicTypeRef = ref('');
+const neteaseMusicLimitRef = ref(0);
+const neteaseMusicOffsetRef = ref(0);
+const option = ref(0);
 const bilibiliRef = ref('');
 const wallPaperRef = ref('');
-const wallPaperNum = ref('');
+const wallPaperNum = ref(1);
 const novelRef = ref('');
 const novelStartRef = ref(1);
 const novelEndRef = ref(1);
+const NeteaseMusicRequest = async () => {
+  let params = {
+    Id: neteaseMusicIdRef.value,
+    type: neteaseMusicTypeRef.value,
+    limit: neteaseMusicLimitRef.value,
+    offset: neteaseMusicOffsetRef.value,
+  };
+  let result = await proxy.Request({
+    url: api.getNeteaseMusicById,
+    showLoading: showLoading,
+    params,
+  });
+  if (!result) {
+    return;
+  }
+}
 const BilibiliRequest = async () => {
   let params = {
     BVId: bilibiliRef.value,

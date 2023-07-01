@@ -61,6 +61,9 @@ const showTxt = () => {
     txtContent.value = txt; //获取的数据data
   };
   reader.readAsText(blobResult.value, encode.value);
+  console.log(reader);
+  console.log(txtContent.value);
+  console.log(encode.value);
 };
 
 onMounted(() => {
